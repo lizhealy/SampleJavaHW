@@ -1,0 +1,42 @@
+package com.cofc.lizhealy.ingredient_matcher;
+
+/**
+ * Created by lizhealy on 4/14/16.
+ */
+import java.net.URLEncoder;
+import java.util.ArrayList;
+
+public abstract class GenericSeeker<E> {
+
+    protected static final String BASE_URL = "http://api.themoviedb.org/2.1/";
+    protected static final String LANGUAGE_PATH = "en/";
+    protected static final String XML_FORMAT = "xml/";
+
+    protected HTTPRetriever httpRetriever = new HTTPRetriever();
+    protected XmlParser xmlParser = new XmlParser();
+
+    public abstract ArrayList<E> find(String query);
+    public abstract ArrayList<E> find(String query, int maxResults);
+
+    public abstract String retrieveSearchMethodPath();
+
+    protected String constructSearchUrl(String query) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(BASE_URL);
+        sb.append(retrieveSearchMethodPath());
+        sb.append(LANGUAGE_PATH);
+        sb.append(XML_FORMAT);
+        sb.append(URLEncoder.encode(query));
+        return sb.toString();
+    }
+
+    public ArrayList<E> retrieveFirstResults(ArrayList<E> list, int maxResults) {
+        ArrayList<E> newList = new ArrayList<E>();
+        int count = Math.min(list.size(), maxResults);
+        for (int i=0; i<count; i++) {
+            newList.add(list.get(i));
+        }
+        return newList;
+    }
+
+}
